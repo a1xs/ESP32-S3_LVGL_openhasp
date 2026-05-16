@@ -1,0 +1,539 @@
+# Helpers used in popups
+input_number:
+  plate_timer_minute:
+    name: "plate_timer_minute"
+    initial: 0
+    min: 0
+    max: 59
+    step: 1
+  plate_timer_hour:
+    name: "plate_timer_hour"
+    initial: 0
+    min: 0
+    max: 12
+    step: 1
+  plate_thermostat:
+    name: "plate_thermostat"
+    initial: 20
+    min: 10
+    max: 30
+    step: 0.5
+
+input_text:
+  plate_sel_entity:
+    name: "plate_sel_entity"
+    initial: "Null"
+
+openhasp:
+  plate04:
+    objects:
+      # All Pages - Clock
+      - obj: "p0b1"
+        properties:
+          "text": '{{ as_timestamp(now())|timestamp_custom("%H:%M") }}'
+          
+      # All Pages - Display off button
+      - obj: "p0b2"
+        event:
+          "up":
+            - service: openhasp.command
+              target:
+                entity_id: openhasp.plate04
+              data:
+                keyword: backlight
+                parameters: "off"
+      
+      # All Pages - Mute button or BED Time ON
+      - obj: "p0b3"
+        properties:
+          "text": '{{ "\uE75F" if is_state("input_boolean.mute", "on") or is_state("binary_sensor.bedtime", "on") else "\uE57E" }}'
+          "text_color": '{{ "#ff9e00" if is_state("input_boolean.mute", "on") or is_state("binary_sensor.bedtime", "on") else "#FFF" }}'
+        event:
+          "up":
+            - service: input_boolean.toggle
+              target:
+                entity_id: input_boolean.mute
+      
+      
+      # All Pages - Navigation buttons
+      - obj: "p0b10"
+        properties:
+          "text_color": '{{ "#ff9e00" if is_state("number.plate04_page_number", "1") else "#FFF" }}'
+      - obj: "p0b11"
+        properties:
+          "text_color": '{{ "#ff9e00" if is_state("number.plate04_page_number", "2") else "#FFF" }}'
+      - obj: "p0b12"
+        properties:
+          "text_color": '{{ "#ff9e00" if is_state("number.plate04_page_number", "3") else "#FFF" }}'
+      - obj: "p0b13"
+        properties:
+          "text_color": '{{ "#ff9e00" if is_state("number.plate04_page_number", "4") else "#FFF" }}'
+
+     # Page 1: Weather & Climate
+      - obj: "p1b12" # Weather icon
+        properties:
+          "text": >
+            {% set condition = states('weather.home_assistant_2') %}
+            {% if condition == 'sunny' %}\E599
+            {% elif condition == 'clear-night' %}\uE594
+            {% elif condition == 'partlycloudy' %}\uE026
+            {% elif condition == 'cloudy' %}\uE026
+            {% elif condition == 'rainy' %}\uE58C
+            {% elif condition == 'pouring' %}\uE58C
+            {% elif condition == 'snowy' %}\uE717
+            {% elif condition == 'fog' %}\uE026
+            {% elif condition == 'windy' %}\uE210
+            {% else %}\uE156
+            {% endif %}
+      - obj: "p1b13" # Weather temperature
+        properties:
+          "text": '{{ state_attr("weather.home_assistant_2", "temperature") | round(1) }}°C'
+      
+      - obj: "p1b14" # Weather humidity
+        properties:
+          "text": '{{ state_attr("weather.home_assistant_2", "humidity") | round(0) }}%'
+      
+      - obj: "p1b15" # Weather label
+        properties:
+          "text": '{{ states("weather.home_assistant_2") | title }}'
+        
+      - obj: "p1b21" # Wind card background color
+        properties:
+          "bg_color": >
+            {% set speed = states('sensor.wind_speed_wcom') | float(0) %}
+            {% if speed < 20 %}#00FF00
+            {% elif speed >= 20 and speed < 40 %}#FFFF00
+            {% elif speed >= 40 and speed < 60 %}#FF7F50
+            {% else %}#FF0000
+            {% endif %}
+    
+
+      - obj: "p1b23" # Wind direction and speed
+        properties:
+          "text": >
+            {% set bearing = states('sensor.wind_bearing_wcom') | float(0) %}
+            {% set speed = states('sensor.wind_speed_wcom') | round(1) %}
+            {% if bearing >= 337.5 or bearing < 22.5 %}N
+            {% elif bearing >= 22.5 and bearing < 67.5 %}NE
+            {% elif bearing >= 67.5 and bearing < 112.5 %}E
+            {% elif bearing >= 112.5 and bearing < 157.5 %}SE
+            {% elif bearing >= 157.5 and bearing < 202.5 %}S
+            {% elif bearing >= 202.5 and bearing < 247.5 %}SW
+            {% elif bearing >= 247.5 and bearing < 292.5 %}W
+            {% elif bearing >= 292.5 and bearing < 337.5 %}NW
+            {% else %}--
+            {% endif %} {{ speed }}
+            
+      - obj: "p1b31" # Outdoor temperature card background color
+        properties:
+          "bg_color": >
+            {% set temp = states('sensor.ac_ac_outdoor_temperature') | float(0) %}
+            {% if temp < 0 %}#0000FF
+            {% elif temp >= 0 and temp < 18 %}#FFFF00
+            {% elif temp >= 18 and temp < 30 %}#008000
+            {% elif temp >= 30 and temp < 35 %}#FF7F50
+            {% else %}#FF0000
+            {% endif %}
+
+
+      - obj: "p1b33" # Outdoor temperature
+        properties:
+          "text": '{{ states("sensor.ac_ac_outdoor_temperature") | round(1) }}°C'
+      
+      - obj: "p1b41" # CO2 background color
+        properties:
+          "bg_color": >
+            {% set co2 = states('sensor.co2_sensor_co2') | int(0) %}
+            {% if co2 < 1300 %}#00FF00
+            {% elif co2 >= 1300 and co2 < 2500 %}#FFFF00
+            {% else %}#FF0000
+            {% endif %}
+        event:
+          "up":
+            - service: homeassistant.toggle
+              target:
+                entity_id: light.ledboard
+      
+      - obj: "p1b42" # CO2 icon (changes based on light state)
+        properties:
+          "text": '{{ "\uE6E8" if is_state("light.ledboard", "on") else "\uE335" }}'
+          "text_color": '{{ "#fb9b06" if is_state("light.ledboard", "on") else "#FFF" }}'
+      
+      - obj: "p1b43" # CO2 value
+        properties:
+          "text": '{{ states("sensor.co2_sensor_co2") | round(0) }}'
+
+      # Page 2: Kitchen
+      - obj: "p2b11" # Kitchen temperature
+        properties:
+          "value_str": '{{ states("sensor.atc_6781_temperature") | round(1) }}°C'
+      - obj: "p2b21" # Kitchen humidity
+        properties:
+          "value_str": '{{ states("sensor.atc_6781_humidity") | round(0) }}%'
+      
+      - obj: "p2b61" # Kitchen heater card
+        properties:
+          "bg_color": '{{ "#FFF" if is_state("climate.kitchen_heater", "heat") else "#000" }}'
+          "bg_opa": '{{ "255" if is_state("climate.kitchen_heater", "heat") else "128" }}'
+        event:
+          "up":
+            - service: script.plate_heater_popup
+              data:
+                entity_name: "Kitchen Heater"
+                entity_id: "climate.kitchen_heater"
+                entity_icon: "\uE438"
+      - obj: "p2b62" # Kitchen heater icon
+        properties:
+          "text_color": '{{ "#ff9e00" if is_state("climate.kitchen_heater", "heat") else "#FFF" }}'
+          "opacity": '{{ "255" if is_state("climate.kitchen_heater", "heat") else "128" }}'
+      - obj: "p2b63" # Kitchen heater label
+        properties:
+          "text_color": '{{ "#000" if is_state("climate.kitchen_heater", "heat") else "#FFF" }}'
+          "opacity": '{{ "255" if is_state("climate.kitchen_heater", "heat") else "128" }}'
+      - obj: "p2b64" # Kitchen heater status
+        properties:
+          "text": '{{ state_attr("climate.kitchen_heater", "temperature") | round(1) }}°C'
+          "text_color": '{{ "#000" if is_state("climate.kitchen_heater", "heat") else "#FFF" }}'
+      
+      - obj: "p2b71" # AC card
+        properties:
+          "bg_color": '{{ "#FFF" if not is_state("climate.ac_ac_finlux", "off") else "#000" }}'
+          "bg_opa": '{{ "255" if not is_state("climate.ac_ac_finlux", "off") else "128" }}'
+        event:
+          "up":
+            - service: script.plate_climate_popup
+              data:
+                entity_name: "Air Conditioner"
+                entity_id: "climate.ac_ac_finlux"
+                entity_icon: "\uE01B"
+      - obj: "p2b72" # AC icon
+        properties:
+          "text_color": '{{ "#2196f3" if not is_state("climate.ac_ac_finlux", "off") else "#FFF" }}'
+          "opacity": '{{ "255" if not is_state("climate.ac_ac_finlux", "off") else "128" }}'
+      - obj: "p2b73" # AC label
+        properties:
+          "text_color": '{{ "#000" if not is_state("climate.ac_ac_finlux", "off") else "#FFF" }}'
+          "opacity": '{{ "255" if not is_state("climate.ac_ac_finlux", "off") else "128" }}'
+      - obj: "p2b74" # AC status
+        properties:
+          "text": '{{ states("climate.ac_ac_finlux") | title if not is_state("climate.ac_ac_finlux", "off") else "Off" }}'
+          "text_color": '{{ "#000" if not is_state("climate.ac_ac_finlux", "off") else "#FFF" }}'
+
+      # Page 3: Bedroom
+      - obj: "p3b11" # Bedroom temperature
+        properties:
+          "value_str": '{{ states("sensor.atc_fa91_temperature") | round(1) }}°C'
+      - obj: "p3b21" # Bedroom humidity
+        properties:
+          "value_str": '{{ states("sensor.atc_fa91_humidity") | round(0) }}%'
+      
+      - obj: "p3b61" # Bedroom heater card
+        properties:
+          "bg_color": '{{ "#FFF" if not is_state("climate.konvektor", "off") else "#000" }}'
+          "bg_opa": '{{ "255" if not is_state("climate.konvektor", "off") else "128" }}'
+        event:
+          "up":
+            - service: script.plate_heater_popup
+              data:
+                entity_name: "Bedroom Heater"
+                entity_id: "climate.konvektor"
+                entity_icon: "\uE438"
+      - obj: "p3b62" # Bedroom heater icon
+        properties:
+          "text_color": '{{ "#ff9e00" if not is_state("climate.konvektor", "off") else "#FFF" }}'
+          "opacity": '{{ "255" if not is_state("climate.konvektor", "off") else "128" }}'
+      - obj: "p3b63" # Bedroom heater label
+        properties:
+          "text_color": '{{ "#000" if not is_state("climate.konvektor", "off") else "#FFF" }}'
+          "opacity": '{{ "255" if not is_state("climate.konvektor", "off") else "128" }}'
+      - obj: "p3b64" # Bedroom heater status
+        properties:
+          "text": '{{ state_attr("climate.konvektor", "temperature") | round(1) }}°C'
+          "text_color": '{{ "#000" if not is_state("climate.konvektor", "off") else "#FFF" }}'
+      
+      - obj: "p3b71" # Bedroom light card
+        properties:
+          "bg_color": '{{ "#FFF" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "#000" }}'
+          "bg_opa": '{{ "255" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "128" }}'
+        event:
+          "up":
+            - service: homeassistant.toggle
+              target:
+                entity_id: light.msl120_ebe9_light_bulb_2
+          "hold":
+            - service: script.plate_light_popup
+              data:
+                entity_name: "Bedroom Light"
+                entity_id: "light.msl120_ebe9_light_bulb_2"
+                entity_icon: "\uE335"
+      - obj: "p3b72" # Bedroom light icon
+        properties:
+          "text_color": '{{ "#fb9b06" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "#FFF" }}'
+          "opacity": '{{ "255" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "128" }}'
+      - obj: "p3b73" # Bedroom light label
+        properties:
+          "text_color": '{{ "#000" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "#FFF" }}'
+          "opacity": '{{ "255" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "128" }}'
+      - obj: "p3b74" # Bedroom light status
+        properties:
+          "text": '{{ "On" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "Off" }}'
+          "text_color": '{{ "#000" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "#FFF" }}'
+
+      # Page 4: Bathroom
+      - obj: "p4b11" # Bathroom temperature
+        properties:
+          "value_str": '{{ states("sensor.atc_5355_temperature") | round(1) }}°C'
+      - obj: "p4b21" # Bathroom humidity
+        properties:
+          "value_str": '{{ states("sensor.atc_fa91_humidity") | round(0) }}%'
+      
+      - obj: "p4b61" # Boiler card
+        properties:
+          "bg_color": '{{ "#FFF" if is_state("switch.boiler_switch", "on") else "#000" }}'
+          "bg_opa": '{{ "255" if is_state("switch.boiler_switch", "on") else "128" }}'
+        event:
+          "up":
+            - service: homeassistant.toggle
+              target:
+                entity_id: switch.boiler_switch
+      - obj: "p4b62" # Boiler icon
+        properties:
+          "text_color": '{{ "#2196f3" if is_state("switch.boiler_switch", "on") else "#FFF" }}'
+          "opacity": '{{ "255" if is_state("switch.boiler_switch", "on") else "128" }}'
+      - obj: "p4b63" # Boiler label
+        properties:
+          "text_color": '{{ "#000" if is_state("switch.boiler_switch", "on") else "#FFF" }}'
+          "opacity": '{{ "255" if is_state("switch.boiler_switch", "on") else "128" }}'
+      - obj: "p4b64" # Boiler status
+        properties:
+          "text": '{{ "On" if is_state("switch.boiler_switch", "on") else "Off" }}'
+          "text_color": '{{ "#000" if is_state("switch.boiler_switch", "on") else "#FFF" }}'
+      - obj: "p4b65" # Boiler power
+        properties:
+          "text": '{{ states("sensor.boiler_phase_a_power") | round(0) }} kW'
+          "text_color": '{{ "#000" if is_state("switch.boiler_switch", "on") else "#FFF" }}'
+
+
+      #############################
+      ### Pop up event handlers ###
+      #############################
+      
+      - obj: "p0b153" # pop-up close button
+        event:
+          "up":
+            - service: openhasp.command
+              target:
+                entity_id: openhasp.plate04
+              data:
+                keyword: p0b150.delete
+            - service: input_number.set_value
+              data:
+                value: 0
+              target:
+                entity_id:
+                  - input_number.plate_timer_hour
+                  - input_number.plate_timer_minute
+            - service: input_text.set_value
+              data:
+                value: "Null"
+              target:
+                entity_id: input_text.plate_sel_entity
+
+      - obj: "p0b155" # light popup: brightness slider
+        event:
+          "up":
+            - service: light.turn_on
+              data:
+                entity_id: "{{ tag }}"
+                brightness: "{{ val }}"
+
+      # Climate popup: Temperature down button
+      - obj: "p0b160"
+        event:
+          "up":
+            - service: climate.set_temperature
+              target:
+                entity_id: '{{ states("input_text.plate_sel_entity") }}'
+              data:
+                temperature: >
+                  {{ [state_attr(states('input_text.plate_sel_entity'), 'temperature') - 1, 
+                      state_attr(states('input_text.plate_sel_entity'), 'min_temp')] | max }}
+            - delay: 0.2
+            - service: openhasp.command
+              target:
+                entity_id: openhasp.plate04
+              data:
+                keyword: p0b161.text
+                parameters: '{{ state_attr(states("input_text.plate_sel_entity"), "temperature") | round(1) }}°C'
+
+      # Climate popup: Temperature up button
+      - obj: "p0b162"
+        event:
+          "up":
+            - service: climate.set_temperature
+              target:
+                entity_id: '{{ states("input_text.plate_sel_entity") }}'
+              data:
+                temperature: >
+                  {{ [state_attr(states('input_text.plate_sel_entity'), 'temperature') + 1, 
+                      state_attr(states('input_text.plate_sel_entity'), 'max_temp')] | min }}
+            - delay: 0.2
+            - service: openhasp.command
+              target:
+                entity_id: openhasp.plate04
+              data:
+                keyword: p0b161.text
+                parameters: '{{ state_attr(states("input_text.plate_sel_entity"), "temperature") | round(1) }}°C'
+
+      # Climate popup: Power button
+      - obj: "p0b170"
+        event:
+          "up":
+            - service: >
+                {% if is_state(states('input_text.plate_sel_entity'), 'off') or is_state(states('input_text.plate_sel_entity'), 'idle') %}
+                  climate.turn_on
+                {% else %}
+                  climate.turn_off
+                {% endif %}
+              target:
+                entity_id: '{{ states("input_text.plate_sel_entity") }}'
+
+      # Climate popup: Auto mode button
+      - obj: "p0b171"
+        event:
+          "up":
+            - service: climate.set_hvac_mode
+              target:
+                entity_id: '{{ states("input_text.plate_sel_entity") }}'
+              data:
+                hvac_mode: auto
+
+      # Climate popup: Cool mode button
+      - obj: "p0b172"
+        event:
+          "up":
+            - service: climate.set_hvac_mode
+              target:
+                entity_id: '{{ states("input_text.plate_sel_entity") }}'
+              data:
+                hvac_mode: cool
+
+      # Climate popup: Heat mode button
+      - obj: "p0b173"
+        event:
+          "up":
+            - service: climate.set_hvac_mode
+              target:
+                entity_id: '{{ states("input_text.plate_sel_entity") }}'
+              data:
+                hvac_mode: heat
+
+      # Climate popup: Fan only mode button
+      - obj: "p0b174"
+        event:
+          "up":
+            - service: climate.set_hvac_mode
+              target:
+                entity_id: '{{ states("input_text.plate_sel_entity") }}'
+              data:
+                hvac_mode: fan_only
+
+      # Climate popup: Dry mode button
+      - obj: "p0b175"
+        event:
+          "up":
+            - service: climate.set_hvac_mode
+              target:
+                entity_id: '{{ states("input_text.plate_sel_entity") }}'
+              data:
+                hvac_mode: dry
+
+script:
+  plate_light_popup:
+    mode: single
+    fields:
+      entity_id:
+        name: entity_id
+      entity_name:
+        name: entity_name
+      entity_icon:
+        name: entity_icon
+    sequence:
+      - service: openhasp.command
+        target:
+          entity_id: openhasp.plate04
+        data:
+          keyword: jsonl
+          parameters: >-
+            {"page":0,"id":150,"obj":"obj","x":85,"y":90,"w":310,"h":340,"radius":15,"click":true,"border_side":0,"bg_color":"#0B61A4"}
+            {"page":0,"id":151,"parentid":150,"obj":"btn","x":10,"y":10,"w":48,"h":48,"click":false,"border_side":0,"text":"{{ entity_icon }}","text_color":"#fff","text_font":48}
+            {"page":0,"id":152,"parentid":150,"obj":"label","x":63,"y":18,"h":30,"w":184,"align":"center","text_color":"#000","text_font": 24,"text":"{{ entity_name }}"}
+            {"page":0,"id":153,"parentid":150,"obj":"btn","x":253,"y":10,"w":48,"h":48,"radius":24,"click":true,"border_side":0,"bg_color":"#CCC","text":"\uE156"}
+            {"page":0,"id":154,"parentid":150,"obj":"label","x":30,"y":80,"h":30,"w":100,"text_color":"#000","text_font":16,"text":"Brightness"}
+            {"page":0,"id":155,"parentid":150,"obj":"slider","x":30,"y":120,"w":250,"h":20,"min":0,"max":255,"bg_opa10":0,"tag":"{{ entity_id }}",
+              "val": {{- state_attr(entity_id, 'brightness') if is_state(entity_id, "on") else "0" -}} }
+
+  plate_heater_popup:
+    mode: single
+    fields:
+      entity_id:
+        name: entity_id
+      entity_name:
+        name: entity_name
+      entity_icon:
+        name: entity_icon
+    sequence:
+      - service: openhasp.command
+        target:
+          entity_id: openhasp.plate04
+        data:
+          keyword: jsonl
+          parameters: >-
+            {"page":0,"id":150,"obj":"obj","x":85,"y":90,"w":310,"h":250,"radius":15,"click":true,"border_side":0,"bg_color":"#0B61A4"}
+            {"page":0,"id":151,"parentid":150,"obj":"label","x":10,"y":10,"w":48,"h":48,"click":false,"text":"{{ entity_icon }}","text_font":48,"text_color":"#fff"}
+            {"page":0,"id":152,"parentid":150,"obj":"label","x":63,"y":18,"h":28,"w":184,"align":"center","text_color":"#fff","text_font":24,"text":"{{ entity_name }}"}
+            {"page":0,"id":153,"parentid":150,"obj":"btn","x":253,"y":10,"w":48,"h":48,"radius":24,"border_side":0,"bg_color":"#CCC","text":"\uE156"}
+            {"page":0,"id":160,"parentid":150,"obj":"btn","x":20,"y":80,"w":60,"h":60,"radius":30,"border_side":0,"bg_color":"#FF5722","text":"\uE374","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":161,"parentid":150,"obj":"label","x":90,"y":80,"w":130,"h":60,"align":"center","text":"{{ state_attr(entity_id, 'temperature') | round(1) }}°C","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":162,"parentid":150,"obj":"btn","x":230,"y":80,"w":60,"h":60,"radius":30,"border_side":0,"bg_color":"#FF5722","text":"\uE415","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":170,"parentid":150,"obj":"btn","x":110,"y":160,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#4CAF50' if is_state(entity_id, 'heat') else '#555' }}","text":"\uE425","text_font":32,"text_color":"#fff"}
+      - service: input_text.set_value
+        data:
+          value: "{{ entity_id }}"
+        target:
+          entity_id: input_text.plate_sel_entity
+
+  plate_climate_popup:
+    mode: single
+    fields:
+      entity_id:
+        name: entity_id
+      entity_name:
+        name: entity_name
+      entity_icon:
+        name: entity_icon
+    sequence:
+      - service: openhasp.command
+        target:
+          entity_id: openhasp.plate04
+        data:
+          keyword: jsonl
+          parameters: >-
+            {"page":0,"id":150,"obj":"obj","x":85,"y":90,"w":310,"h":340,"radius":15,"click":true,"border_side":0,"bg_color":"#0B61A4"}
+            {"page":0,"id":151,"parentid":150,"obj":"label","x":10,"y":10,"w":48,"h":48,"click":false,"text":"{{ entity_icon }}","text_font":48,"text_color":"#fff"}
+            {"page":0,"id":152,"parentid":150,"obj":"label","x":63,"y":18,"h":28,"w":184,"align":"center","text_color":"#fff","text_font":24,"text":"{{ entity_name }}"}
+            {"page":0,"id":153,"parentid":150,"obj":"btn","x":253,"y":10,"w":48,"h":48,"radius":24,"border_side":0,"bg_color":"#CCC","text":"\uE156"}
+            {"page":0,"id":160,"parentid":150,"obj":"btn","x":20,"y":80,"w":60,"h":60,"radius":30,"border_side":0,"bg_color":"#FF5722","text":"\uE374","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":161,"parentid":150,"obj":"label","x":90,"y":80,"w":130,"h":60,"align":"center","text":"{{ state_attr(entity_id, 'temperature') | round(1) }}°C","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":162,"parentid":150,"obj":"btn","x":230,"y":80,"w":60,"h":60,"radius":30,"border_side":0,"bg_color":"#FF5722","text":"\uE415","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":170,"parentid":150,"obj":"btn","x":10,"y":160,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#4CAF50' if not is_state(entity_id, 'off') else '#555' }}","text":"\uE425","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":171,"parentid":150,"obj":"btn","x":110,"y":160,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#2196F3' if state_attr(entity_id, 'hvac_mode') == 'auto' else '#555' }}","text":"\uE32A","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":172,"parentid":150,"obj":"btn","x":210,"y":160,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#03A9F4' if state_attr(entity_id, 'hvac_mode') == 'cool' else '#555' }}","text":"\uE717","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":173,"parentid":150,"obj":"btn","x":10,"y":240,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#FF5722' if state_attr(entity_id, 'hvac_mode') == 'heat' else '#555' }}","text":"\uE238","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":174,"parentid":150,"obj":"btn","x":110,"y":240,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#9E9E9E' if state_attr(entity_id, 'hvac_mode') == 'fan_only' else '#555' }}","text":"\uE210","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":175,"parentid":150,"obj":"btn","x":210,"y":240,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#00BCD4' if state_attr(entity_id, 'hvac_mode') == 'dry' else '#555' }}","text":"\uE58E","text_font":32,"text_color":"#fff"}
+      - service: input_text.set_value
+        data:
+          value: "{{ entity_id }}"
+        target:
+          entity_id: input_text.plate_sel_entity

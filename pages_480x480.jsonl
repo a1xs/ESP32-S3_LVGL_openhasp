@@ -1,0 +1,97 @@
+{"page":1,"id":0,"bg_color":"#068ce1", "bg_grad_color": "#211a50", "bg_grad_dir": 1}
+{"page":2,"id":0,"bg_color":"#00d3ed", "bg_grad_color": "#006495", "bg_grad_dir": 1}
+{"page":3,"id":0,"bg_color":"#da50f4", "bg_grad_color": "#4942ff", "bg_grad_dir": 1}
+{"page":4,"id":0,"bg_color":"#07ceff", "bg_grad_color": "#ff4693", "bg_grad_dir": 1}
+
+{"page":1,"id":1,"obj":"img","src":"L:/hk-Outside.png","auto_size":0,"w":480}
+{"page":2,"id":1,"obj":"img","src":"L:/hk-Kitchen.png","auto_size":0,"w":480}
+{"page":3,"id":1,"obj":"img","src":"L:/hk-Bedroom.png","auto_size":0,"w":480}
+{"page":4,"id":1,"obj":"img","src":"L:/hk-Bathroom.png","auto_size":0,"w":480}
+
+{"page":0,"id":1,"obj":"label","x":410,"y":45,"h":30,"w":480,"text":"14:20", "text_color":"#FFF","text_font": 30}
+{"page":0,"id":2,"obj":"btn","x":430,"y":10,"w":35,"h":35,"radius":18,"bg_color":"#000","text":"\uE425","text_color":"#FFF","text_font":24,"border_side":0}
+{"page":0,"id":3,"obj":"btn","x":330,"y":10,"w":35,"h":35,"radius":18,"bg_color":"#444","text":"\uE580","text_color":"#FFF","text_font":24,"border_side":0}
+
+{"page":1,"id":2,"obj":"label","x":15,"y":45,"h":30,"w":480,"text":"Weather & Climate", "text_color":"#FFF","text_font": 24}
+
+{"page":1,"id":11,"obj":"obj","x":15,"y":90,"w":140,"h":85,"radius":15,"bg_color":"#000","click":true, "border_color": "#FFF", "bg_opa": 128}
+{"page":1,"id":12,"obj":"label","x":25,"y":90,"h":35,"w":60,"text":"\uE156", "text_color":"#FFF","text_font": 32, "click":false}
+{"page":1,"id":13,"obj":"label","x":90,"y":100,"h":30,"w":60,"text":"--°C", "text_color":"#FFF","text_font": 24, "click":false}
+{"page":1,"id":14,"obj":"label","x":90,"y":130,"h":25,"w":60,"text":"--%", "text_color":"#FFF","text_font": 18, "click":false}
+{"page":1,"id":15,"obj":"label","x":25,"y":145,"h":25,"w":120,"text":"Weather", "text_color":"#FFF","text_font": 16, "click":false}
+
+{"page":1,"id":21,"obj":"obj","x":165,"y":90,"w":140,"h":85,"radius":15,"bg_color":"#4caf50","click":false, "border_color": "#FFF", "bg_opa": 255}
+{"page":1,"id":22,"obj":"label","x":175,"y":90,"h":35,"w":60,"text":"\uE210", "text_color":"#FFF","text_font": 32, "click":false}
+{"page":1,"id":23,"obj":"label","x":215,"y":100,"h":30,"w":85,"text":"N 0", "text_color":"#FFF","text_font": 20, "click":false}
+{"page":1,"id":24,"obj":"label","x":175,"y":135,"h":30,"w":120,"text":"Wind km/h", "text_color":"#FFF","text_font": 16, "click":false}
+
+{"page":1,"id":31,"obj":"obj","x":315,"y":90,"w":150,"h":85,"radius":15,"bg_color":"#4caf50","click":false, "border_color": "#FFF", "bg_opa": 255}
+{"page":1,"id":32,"obj":"label","x":325,"y":90,"h":35,"w":60,"text":"\uE50F", "text_color":"#FFF","text_font": 32, "click":false}
+{"page":1,"id":33,"obj":"label","x":390,"y":100,"h":30,"w":70,"text":"--°C", "text_color":"#FFF","text_font": 24, "click":false}
+{"page":1,"id":34,"obj":"label","x":325,"y":135,"h":30,"w":130,"text":"Outdoor Temp", "text_color":"#FFF","text_font": 16, "click":false}
+
+{"page":1,"id":41,"obj":"obj","x":15,"y":180,"w":140,"h":85,"radius":15,"bg_color":"#4caf50","click":true, "border_side":0, "bg_opa": 255}
+{"page":1,"id":42,"obj":"label","x":20,"y":180,"h":35,"w":60,"text":"\uE238", "text_color":"#FFF","text_font": 32, "click":false}
+{"page":1,"id":43,"obj":"label","x":90,"y":190,"h":30,"w":60,"text":"--", "text_color":"#FFF","text_font": 24, "click":false}
+{"page":1,"id":44,"obj":"label","x":25,"y":225,"h":30,"w":120,"text":"CO2 ppm", "text_color":"#FFF","text_font": 16, "click":false}
+
+{"page":2,"id":2,"obj":"label","x":15,"y":45,"h":30,"w":480,"text":"Kitchen", "text_color":"#FFF","text_font": 24, "click":false}
+
+{"page":2,"id":11,"obj":"obj","x":15,"y":90,"w":65,"h":65,"radius":35,"bg_color":"#FFF","click":false, "border_color": "#FFF", "bg_opa": 0, "value_str":"--°C", "value_color":"#FFF"}
+{"page":2,"id":12,"obj":"label","x":15,"y":160,"h":65,"w":65,"text":"Temp", "text_color":"#FFF","text_font": 16, "align": "center", "click":false}
+
+{"page":2,"id":21,"obj":"obj","x":90,"y":90,"w":65,"h":65,"radius":35,"bg_color":"#FFF","click":false, "border_color": "#FFF", "bg_opa": 0, "value_str":"--%", "value_color":"#FFF"}
+{"page":2,"id":22,"obj":"label","x":90,"y":160,"h":65,"w":65,"text":"Humidity", "text_color":"#FFF","text_font": 16, "align": "center", "click":false}
+
+{"page":2,"id":50,"obj":"label","x":15,"y":200,"h":30,"w":480,"text":"Climate Control", "text_color":"#FFF","text_font": 16, "click":false}
+
+{"page":2,"id":61,"obj":"obj","x":5,"y":225,"w":150,"h":100,"radius":15,"click":true,"border_side":0,"bg_color":"#000", "bg_opa": 128}
+{"page":2,"id":62,"obj":"label","x":15,"y":235,"h":45,"w":150,"text":"\uE438", "text_color":"#ff9e00","text_font": 32, "click":false}
+{"page":2,"id":63,"obj":"label","x":15,"y":280,"h":30,"w":150,"text":"Heater", "text_color":"#FFF","text_font": 16, "click":false}
+{"page":2,"id":64,"obj":"label","x":15,"y":300,"h":30,"w":150,"text":"Off", "text_color":"#FFF","text_font": 16, "opacity": 128, "click":false}
+
+{"page":2,"id":71,"obj":"obj","x":165,"y":225,"w":150,"h":100,"radius":15,"click":true,"border_side":0,"bg_color":"#000", "bg_opa": 128}
+{"page":2,"id":72,"obj":"label","x":175,"y":235,"h":45,"w":150,"text":"\uE01B", "text_color":"#ff9e00","text_font": 32, "click":false}
+{"page":2,"id":73,"obj":"label","x":175,"y":280,"h":30,"w":150,"text":"AC", "text_color":"#FFF","text_font": 16, "click":false}
+{"page":2,"id":74,"obj":"label","x":175,"y":300,"h":30,"w":150,"text":"Off", "text_color":"#FFF","text_font": 16, "opacity": 128, "click":false}
+
+{"page":3,"id":2,"obj":"label","x":15,"y":45,"h":30,"w":480,"text":"Bedroom", "text_color":"#FFF","text_font": 24, "click":false}
+
+{"page":3,"id":11,"obj":"obj","x":15,"y":90,"w":65,"h":65,"radius":35,"bg_color":"#FFF","click":false, "border_color": "#FFF", "bg_opa": 0, "value_str":"--°C", "value_color":"#FFF"}
+{"page":3,"id":12,"obj":"label","x":15,"y":160,"h":65,"w":65,"text":"Temp", "text_color":"#FFF","text_font": 16, "align": "center", "click":false}
+
+{"page":3,"id":21,"obj":"obj","x":90,"y":90,"w":65,"h":65,"radius":35,"bg_color":"#FFF","click":false, "border_color": "#FFF", "bg_opa": 0, "value_str":"--%", "value_color":"#FFF"}
+{"page":3,"id":22,"obj":"label","x":90,"y":160,"h":65,"w":65,"text":"Humidity", "text_color":"#FFF","text_font": 16, "align": "center", "click":false}
+
+{"page":3,"id":50,"obj":"label","x":15,"y":200,"h":30,"w":480,"text":"Climate & Light", "text_color":"#FFF","text_font": 16, "click":false}
+
+{"page":3,"id":61,"obj":"obj","x":5,"y":225,"w":150,"h":100,"radius":15,"click":true,"border_side":0,"bg_color":"#000", "bg_opa": 128}
+{"page":3,"id":62,"obj":"label","x":15,"y":235,"h":45,"w":150,"text":"\uE438", "text_color":"#ff9e00","text_font": 32, "click":false}
+{"page":3,"id":63,"obj":"label","x":15,"y":280,"h":30,"w":150,"text":"Heater", "text_color":"#FFF","text_font": 16, "click":false}
+{"page":3,"id":64,"obj":"label","x":15,"y":300,"h":30,"w":150,"text":"Off", "text_color":"#FFF","text_font": 16, "opacity": 128, "click":false}
+
+{"page":3,"id":71,"obj":"obj","x":165,"y":225,"w":150,"h":100,"radius":15,"click":true,"border_side":0,"bg_color":"#000", "bg_opa": 128}
+{"page":3,"id":72,"obj":"label","x":175,"y":235,"h":45,"w":150,"text":"\uE6B5", "text_color":"#ff9e00","text_font": 32, "click":false}
+{"page":3,"id":73,"obj":"label","x":175,"y":280,"h":30,"w":150,"text":"Light", "text_color":"#FFF","text_font": 16, "click":false}
+{"page":3,"id":74,"obj":"label","x":175,"y":300,"h":30,"w":150,"text":"Off", "text_color":"#FFF","text_font": 16, "opacity": 128, "click":false}
+
+{"page":4,"id":2,"obj":"label","x":15,"y":45,"h":30,"w":480,"text":"Bathroom", "text_color":"#FFF","text_font": 24, "click":false}
+
+{"page":4,"id":11,"obj":"obj","x":15,"y":90,"w":65,"h":65,"radius":35,"bg_color":"#FFF","click":false, "border_color": "#FFF", "bg_opa": 0, "value_str":"--°C", "value_color":"#FFF"}
+{"page":4,"id":12,"obj":"label","x":15,"y":160,"h":65,"w":65,"text":"Temp", "text_color":"#FFF","text_font": 16, "align": "center", "click":false}
+
+{"page":4,"id":21,"obj":"obj","x":90,"y":90,"w":65,"h":65,"radius":35,"bg_color":"#FFF","click":false, "border_color": "#FFF", "bg_opa": 0, "value_str":"--%", "value_color":"#FFF"}
+{"page":4,"id":22,"obj":"label","x":90,"y":160,"h":65,"w":65,"text":"Humidity", "text_color":"#FFF","text_font": 16, "align": "center", "click":false}
+
+{"page":4,"id":50,"obj":"label","x":15,"y":200,"h":30,"w":480,"text":"Water Heater", "text_color":"#FFF","text_font": 16, "click":false}
+
+{"page":4,"id":61,"obj":"obj","x":5,"y":225,"w":150,"h":100,"radius":15,"click":true,"border_side":0,"bg_color":"#000", "bg_opa": 128}
+{"page":4,"id":62,"obj":"label","x":15,"y":235,"h":45,"w":150,"text":"\uE425", "text_color":"#ff9e00","text_font": 32, "click":false}
+{"page":4,"id":63,"obj":"label","x":15,"y":280,"h":30,"w":150,"text":"Boiler", "text_color":"#FFF","text_font": 16, "click":false}
+{"page":4,"id":64,"obj":"label","x":15,"y":300,"h":30,"w":150,"text":"Off", "text_color":"#FFF","text_font": 16, "opacity": 128, "click":false}
+{"page":4,"id":65,"obj":"label","x":80,"y":280,"h":30,"w":150,"text":"0 W", "text_color":"#FFF","text_font": 14, "click":false}
+
+{"page":0,"id":10,"obj":"btn","action":"p1","x":0,"y":435,"w":120,"h":45,"bg_color":"#2a283d","text":"\uE2DC","text_color":"#ff9e00","radius":0,"border_side":0,"text_font":32}
+{"page":0,"id":11,"obj":"btn","action":"p2","x":120,"y":435,"w":120,"h":45,"bg_color":"#2a283d","text":"\uE176","text_color":"#FFFFFF","radius":0,"border_side":0,"text_font":32}
+{"page":0,"id":12,"obj":"btn","action":"p3","x":240,"y":435,"w":120,"h":45,"bg_color":"#2a283d","text":"\uE2E3","text_color":"#FFFFFF","radius":0,"border_side":0,"text_font":32}
+{"page":0,"id":13,"obj":"btn","action":"p4","x":360,"y":435,"w":120,"h":45,"bg_color":"#2a283d","text":"\uE9A0","text_color":"#FFFFFF","radius":0,"border_side":0,"text_font":32}
