@@ -20,3 +20,10 @@ packages:
 homeassistant:
  packages: !include_dir_named packages
 ```
+
+<img width="482" height="483" alt="изображение" src="https://github.com/user-attachments/assets/8cfd7161-b599-4083-a9ff-8208c3157b9c" />
+<img width="480" height="470" alt="изображение" src="https://github.com/user-attachments/assets/b48becdc-813d-458a-8e53-2629d318d942" />
+<img width="479" height="475" alt="изображение" src="https://github.com/user-attachments/assets/0d29e8f0-42e4-4b26-ba2f-ced084106228" />
+<img width="479" height="476" alt="изображение" src="https://github.com/user-attachments/assets/e93408d6-e73a-4469-9d6b-d12dead10010" />
+
+
