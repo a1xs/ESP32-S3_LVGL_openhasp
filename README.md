@@ -1,7 +1,7 @@
 # ESP32-S3_LVGL_openhasp
 Touch panel ESP32-S3 for HomeAssistant
 
-1. Прошить образ esp32-s3-4848S040_full_16MB_v0.7.0-rc9.bin утилитой flash_download_tool
+1. Прошить образ esp32-s3-4848S040_full_16MB_v0.7.0-rc9.bin утилитой [flash_download_tool](https://drive.google.com/file/d/1ARa8jrAr6XukPA4sprHXYTR2nTlOlBGB/view?usp=drive_link)
    Для этого подключаемся по usb к компьютеру и запускаем программу flash_download_tool. В ней Выбираем так как показано на скрине и собственно загружаем прошивку:
    
    <img width="427" height="672" alt="изображение" src="https://github.com/user-attachments/assets/09792c06-0755-4f9e-b41e-6a1e10a0406f" />
