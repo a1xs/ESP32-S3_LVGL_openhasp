@@ -9,10 +9,12 @@ Touch panel ESP32-S3 for HomeAssistant
    <img width="623" height="414" alt="изображение" src="https://github.com/user-attachments/assets/386c7583-fe8a-4036-9d67-517c97a16422" />
 
 3. В Configuration -> GPIO Settings Настроить выходы реле (Add New Pin Output) Где первое реле = 40 pin, Второе = 2 pin, Третье = 1 pin
-4. Настроить MQTT Settings (Настройки- Приложения - Mosquitto broker)
+   <img width="696" height="414" alt="изображение" src="https://github.com/user-attachments/assets/924f994e-4a28-4973-8c7a-bee61649d360" />
+
+5. Настроить MQTT Settings (Настройки- Приложения - Mosquitto broker)
    <img width="844" height="243" alt="изображение" src="https://github.com/user-attachments/assets/9b924821-23c8-4c21-8625-1a53bdfa7678" />
    
-5. в меню File editor загрузить картинки и файлы команд с папки "Upload to FILE EDITOR" (upload)
+6. в меню File editor загрузить картинки и файлы команд с папки "Upload to FILE EDITOR" (upload)
    <img width="659" height="378" alt="изображение" src="https://github.com/user-attachments/assets/7e2c76e1-0a3c-40b4-95ec-ecc6144d1050" />
 
 9. Открыть в File Editor {}pages.jsonl и заменить весь код на содержимое файла "pages_480x480.jsonl"
