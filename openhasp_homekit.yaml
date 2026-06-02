@@ -68,23 +68,20 @@ openhasp:
       - obj: "p0b13"
         properties:
           "text_color": '{{ "#ff9e00" if is_state("number.plate04_page_number", "4") else "#FFF" }}'
+      
+      # All Pages - Settings button (page 5)
+      - obj: "p0b4"
+        properties:
+          "text_color": '{{ "#ff9e00" if is_state("number.plate04_page_number", "5") else "#FFF" }}'
 
      # Page 1: Weather & Climate
       - obj: "p1b12" # Weather icon
         properties:
-          "text": >
-            {% set condition = states('weather.home_assistant_2') %}
-            {% if condition == 'sunny' %}\E599
-            {% elif condition == 'clear-night' %}\uE594
-            {% elif condition == 'partlycloudy' %}\uE026
-            {% elif condition == 'cloudy' %}\uE026
-            {% elif condition == 'rainy' %}\uE58C
-            {% elif condition == 'pouring' %}\uE58C
-            {% elif condition == 'snowy' %}\uE717
-            {% elif condition == 'fog' %}\uE026
-            {% elif condition == 'windy' %}\uE210
-            {% else %}\uE156
-            {% endif %}
+          #"text": '{{ "\uE599" if states("weather.home_assistant_2") == "sunny" else "\uE594" if states("weather.home_assistant_2") == "clear-night" else "\uE5A8" if states("weather.home_assistant_2") in ["partlycloudy", "cloudy"] else "\uE026" if states("weather.home_assistant_2") in ["rainy", "pouring"] else "\uE717" if states("weather.home_assistant_2") == "snowy" else "\uE5A8" }}'
+          
+          "src": '{{ "L:/w-sunny.png" if states("weather.home_assistant_2") == "sunny" else "L:/w-sunny.png" if states("weather.home_assistant_2") == "clear-night" else "L:/w-cloudy.png" if states("weather.home_assistant_2") == "cloudy" else "L:/w-partlycloudy.png" if states("weather.home_assistant_2") == "partlycloudy" else "L:/w-rainy.png" if states("weather.home_assistant_2") == "rainy" else "L:/w-pouring.png" if states("weather.home_assistant_2") == "pouring" else "L:/w-storm.png" if states("weather.home_assistant_2") == "storm" else "L:/w-snowy.png" if states("weather.home_assistant_2") == "snowy" else "L:/w-foggy.png" if states("weather.home_assistant_2") == "fog" else "L:/w-windy.png" if states("weather.home_assistant_2") == "windy" else "L:/w-cloudy.png" }}'
+          
+          
       - obj: "p1b13" # Weather temperature
         properties:
           "text": '{{ state_attr("weather.home_assistant_2", "temperature") | round(1) }}°C'
@@ -128,10 +125,10 @@ openhasp:
         properties:
           "bg_color": >
             {% set temp = states('sensor.ac_ac_outdoor_temperature') | float(0) %}
-            {% if temp < 0 %}#0000FF
-            {% elif temp >= 0 and temp < 18 %}#FFFF00
-            {% elif temp >= 18 and temp < 30 %}#008000
-            {% elif temp >= 30 and temp < 35 %}#FF7F50
+            {% if temp < 5 %}#0000FF
+            {% elif temp >= 5 and temp < 18 %}#FFFF00
+            {% elif temp >= 18 and temp < 30 %}#00FF00
+            {% elif temp >= 30 and temp < 35 %}#FFA500
             {% else %}#FF0000
             {% endif %}
 
@@ -192,7 +189,11 @@ openhasp:
           "opacity": '{{ "255" if is_state("climate.kitchen_heater", "heat") else "128" }}'
       - obj: "p2b64" # Kitchen heater status
         properties:
-          "text": '{{ state_attr("climate.kitchen_heater", "temperature") | round(1) }}°C'
+          "text": >
+            {% if is_state("climate.kitchen_heater", "unavailable") %}N/A
+            {% elif is_state("climate.kitchen_heater", "heat") %}{{ state_attr("climate.kitchen_heater", "temperature") | round(1) }}°C
+            {% else %}Off
+            {% endif %}
           "text_color": '{{ "#000" if is_state("climate.kitchen_heater", "heat") else "#FFF" }}'
       
       - obj: "p2b71" # AC card
@@ -229,8 +230,8 @@ openhasp:
       
       - obj: "p3b61" # Bedroom heater card
         properties:
-          "bg_color": '{{ "#FFF" if not is_state("climate.konvektor", "off") else "#000" }}'
-          "bg_opa": '{{ "255" if not is_state("climate.konvektor", "off") else "128" }}'
+          "bg_color": '{{ "#FFF" if is_state("climate.konvektor", "heat") else "#000" }}'
+          "bg_opa": '{{ "255" if is_state("climate.konvektor", "heat") else "128" }}'
         event:
           "up":
             - service: script.plate_heater_popup
@@ -240,16 +241,20 @@ openhasp:
                 entity_icon: "\uE438"
       - obj: "p3b62" # Bedroom heater icon
         properties:
-          "text_color": '{{ "#ff9e00" if not is_state("climate.konvektor", "off") else "#FFF" }}'
-          "opacity": '{{ "255" if not is_state("climate.konvektor", "off") else "128" }}'
+          "text_color": '{{ "#ff9e00" if is_state("climate.konvektor", "heat") else "#FFF" }}'
+          "opacity": '{{ "255" if is_state("climate.konvektor", "heat") else "128" }}'
       - obj: "p3b63" # Bedroom heater label
         properties:
-          "text_color": '{{ "#000" if not is_state("climate.konvektor", "off") else "#FFF" }}'
-          "opacity": '{{ "255" if not is_state("climate.konvektor", "off") else "128" }}'
+          "text_color": '{{ "#000" if is_state("climate.konvektor", "heat") else "#FFF" }}'
+          "opacity": '{{ "255" if is_state("climate.konvektor", "heat") else "128" }}'
       - obj: "p3b64" # Bedroom heater status
         properties:
-          "text": '{{ state_attr("climate.konvektor", "temperature") | round(1) }}°C'
-          "text_color": '{{ "#000" if not is_state("climate.konvektor", "off") else "#FFF" }}'
+          "text": >
+            {% if is_state("climate.konvektor", "unavailable") %}N/A
+            {% elif is_state("climate.konvektor", "heat") %}{{ state_attr("climate.konvektor", "temperature") | round(1) }}°C
+            {% else %}Off
+            {% endif %}
+          "text_color": '{{ "#000" if is_state("climate.konvektor", "heat") else "#FFF" }}'
       
       - obj: "p3b71" # Bedroom light card
         properties:
@@ -278,6 +283,30 @@ openhasp:
         properties:
           "text": '{{ "On" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "Off" }}'
           "text_color": '{{ "#000" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "#FFF" }}'
+      
+      - obj: "p3b81" # Vacuum card
+        properties:
+          "bg_color": '{{ "#FFF" if is_state("switch.ijai_v1_642f_switch_status", "on") else "#000" }}'
+          "bg_opa": '{{ "255" if is_state("switch.ijai_v1_642f_switch_status", "on") else "128" }}'
+        event:
+          "up":
+            - service: script.plate_vacuum_popup
+              data:
+                entity_name: "Vacuum"
+                entity_id: "switch.ijai_v1_642f_switch_status"
+                entity_icon: "\uE70D"
+      - obj: "p3b82" # Vacuum icon
+        properties:
+          "text_color": '{{ "#4CAF50" if is_state("switch.ijai_v1_642f_switch_status", "on") else "#ff9e00" }}'
+          "opacity": '{{ "255" if is_state("switch.ijai_v1_642f_switch_status", "on") else "128" }}'
+      - obj: "p3b83" # Vacuum label
+        properties:
+          "text_color": '{{ "#000" if is_state("switch.ijai_v1_642f_switch_status", "on") else "#FFF" }}'
+          "opacity": '{{ "255" if is_state("switch.ijai_v1_642f_switch_status", "on") else "128" }}'
+      - obj: "p3b84" # Vacuum status
+        properties:
+          "text": '{{ states("sensor.ijai_v1_642f_battery_level") }}%'
+          "text_color": '{{ "#000" if is_state("switch.ijai_v1_642f_switch_status", "on") else "#FFF" }}'
 
       # Page 4: Bathroom
       - obj: "p4b11" # Bathroom temperature
@@ -285,7 +314,7 @@ openhasp:
           "value_str": '{{ states("sensor.atc_5355_temperature") | round(1) }}°C'
       - obj: "p4b21" # Bathroom humidity
         properties:
-          "value_str": '{{ states("sensor.atc_fa91_humidity") | round(0) }}%'
+          "value_str": '{{ states("sensor.atc_5355_humidity") | round(0) }}%'
       
       - obj: "p4b61" # Boiler card
         properties:
@@ -298,7 +327,7 @@ openhasp:
                 entity_id: switch.boiler_switch
       - obj: "p4b62" # Boiler icon
         properties:
-          "text_color": '{{ "#2196f3" if is_state("switch.boiler_switch", "on") else "#FFF" }}'
+          "text_color": '{{ "#ff9e00" if is_state("switch.boiler_switch", "on") else "#FFF" }}'
           "opacity": '{{ "255" if is_state("switch.boiler_switch", "on") else "128" }}'
       - obj: "p4b63" # Boiler label
         properties:
@@ -308,10 +337,19 @@ openhasp:
         properties:
           "text": '{{ "On" if is_state("switch.boiler_switch", "on") else "Off" }}'
           "text_color": '{{ "#000" if is_state("switch.boiler_switch", "on") else "#FFF" }}'
+
       - obj: "p4b65" # Boiler power
         properties:
           "text": '{{ states("sensor.boiler_phase_a_power") | round(0) }} kW'
           "text_color": '{{ "#000" if is_state("switch.boiler_switch", "on") else "#FFF" }}'
+
+      # Page 5: System
+      - obj: "p5b61" # Restart panel button
+        event:
+          "up":
+            - service: button.press
+              target:
+                entity_id: button.plate04_restart
 
 
       #############################
@@ -448,6 +486,30 @@ openhasp:
               data:
                 hvac_mode: dry
 
+      # Vacuum popup: Start cleaning button
+      - obj: "p0b180"
+        event:
+          "up":
+            - service: switch.turn_on
+              target:
+                entity_id: switch.ijai_v1_642f_switch_status
+
+      # Vacuum popup: Pause button
+      - obj: "p0b182"
+        event:
+          "up":
+            - service: switch.turn_off
+              target:
+                entity_id: switch.ijai_v1_642f_switch_status
+
+      # Vacuum popup: Return to base button
+      - obj: "p0b184"
+        event:
+          "up":
+            - service: switch.turn_off
+              target:
+                entity_id: switch.ijai_v1_642f_switch_status
+
 script:
   plate_light_popup:
     mode: single
@@ -535,5 +597,38 @@ script:
       - service: input_text.set_value
         data:
           value: "{{ entity_id }}"
+        target:
+          entity_id: input_text.plate_sel_entity
+
+  plate_vacuum_popup:
+    mode: single
+    fields:
+      entity_id:
+        name: entity_id
+      entity_name:
+        name: entity_name
+      entity_icon:
+        name: entity_icon
+    sequence:
+      - service: openhasp.command
+        target:
+          entity_id: openhasp.plate04
+        data:
+          keyword: jsonl
+          parameters: >-
+            {"page":0,"id":150,"obj":"obj","x":85,"y":120,"w":310,"h":280,"radius":15,"click":true,"border_side":0,"bg_color":"#0B61A4"}
+            {"page":0,"id":151,"parentid":150,"obj":"label","x":10,"y":10,"w":48,"h":48,"click":false,"text":"{{ entity_icon }}","text_font":48,"text_color":"#fff"}
+            {"page":0,"id":152,"parentid":150,"obj":"label","x":63,"y":18,"h":28,"w":184,"align":"center","text_color":"#fff","text_font":24,"text":"{{ entity_name }}"}
+            {"page":0,"id":153,"parentid":150,"obj":"btn","x":253,"y":10,"w":48,"h":48,"radius":24,"border_side":0,"bg_color":"#CCC","text":"\uE156"}
+            {"page":0,"id":180,"parentid":150,"obj":"btn","x":10,"y":80,"w":90,"h":80,"radius":10,"border_side":0,"bg_color":"#4CAF50","text":"\uE037","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":181,"parentid":150,"obj":"label","x":10,"y":165,"w":90,"h":25,"align":"center","text":"Уборка","text_font":16,"text_color":"#fff"}
+            {"page":0,"id":182,"parentid":150,"obj":"btn","x":110,"y":80,"w":90,"h":80,"radius":10,"border_side":0,"bg_color":"#FF9800","text":"\uE88A","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":183,"parentid":150,"obj":"label","x":110,"y":165,"w":90,"h":25,"align":"center","text":"Пауза","text_font":16,"text_color":"#fff"}
+            {"page":0,"id":184,"parentid":150,"obj":"btn","x":210,"y":80,"w":90,"h":80,"radius":10,"border_side":0,"bg_color":"#2196F3","text":"\uE88E","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":185,"parentid":150,"obj":"label","x":210,"y":165,"w":90,"h":25,"align":"center","text":"На базу","text_font":16,"text_color":"#fff"}
+            {"page":0,"id":186,"parentid":150,"obj":"label","x":10,"y":200,"w":290,"h":60,"align":"center","text":"Battery: {{ states('sensor.ijai_v1_642f_battery_level') }}%","text_font":20,"text_color":"#fff"}
+      - service: input_text.set_value
+        data:
+          value: "switch.ijai_v1_642f_switch_status"
         target:
           entity_id: input_text.plate_sel_entity
