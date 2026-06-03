@@ -80,8 +80,6 @@ openhasp:
           #"text": '{{ "\uE599" if states("weather.home_assistant_2") == "sunny" else "\uE594" if states("weather.home_assistant_2") == "clear-night" else "\uE5A8" if states("weather.home_assistant_2") in ["partlycloudy", "cloudy"] else "\uE026" if states("weather.home_assistant_2") in ["rainy", "pouring"] else "\uE717" if states("weather.home_assistant_2") == "snowy" else "\uE5A8" }}'
           
           "src": '{{ "L:/w-sunny.png" if states("weather.home_assistant_2") == "sunny" else "L:/w-sunny.png" if states("weather.home_assistant_2") == "clear-night" else "L:/w-cloudy.png" if states("weather.home_assistant_2") == "cloudy" else "L:/w-partlycloudy.png" if states("weather.home_assistant_2") == "partlycloudy" else "L:/w-rainy.png" if states("weather.home_assistant_2") == "rainy" else "L:/w-pouring.png" if states("weather.home_assistant_2") == "pouring" else "L:/w-lightning-rainy.png" if states("weather.home_assistant_2") == "lightning-rainy" else "L:/w-lightning.png" if states("weather.home_assistant_2") == "lightning" else "L:/w-storm.png" if states("weather.home_assistant_2") == "storm" else "L:/w-snowy.png" if states("weather.home_assistant_2") == "snowy" else "L:/w-snowy-rainy.png" if states("weather.home_assistant_2") == "snowy-rainy" else "L:/w-hail.png" if states("weather.home_assistant_2") == "hail" else "L:/w-foggy.png" if states("weather.home_assistant_2") == "fog" else "L:/w-windy.png" if states("weather.home_assistant_2") == "windy" else "L:/w-windy-variant.png" if states("weather.home_assistant_2") == "windy-variant" else "L:/w-exceptional.png" if states("weather.home_assistant_2") == "exceptional" else "L:/w-cloudy.png" }}'
-
-
           
           
       - obj: "p1b13" # Weather temperature
@@ -286,29 +284,40 @@ openhasp:
           "text": '{{ "On" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "Off" }}'
           "text_color": '{{ "#000" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "#FFF" }}'
       
-      - obj: "p3b81" # Vacuum card
+      - obj: "p1b51" # Vacuum card
         properties:
-          "bg_color": '{{ "#FFF" if is_state("switch.ijai_v1_642f_switch_status", "on") else "#000" }}'
-          "bg_opa": '{{ "255" if is_state("switch.ijai_v1_642f_switch_status", "on") else "128" }}'
+          "bg_color": >
+            {% set status = states('sensor.ijai_v1_642f_status') %}
+            {% if status in ['cleaning', 'mopping', 'sweeping'] %}#4CAF50
+            {% elif status == 'charging' %}#2196F3
+            {% elif status == 'error' %}#FF0000
+            {% else %}#000
+            {% endif %}
+          "bg_opa": >
+            {% set status = states('sensor.ijai_v1_642f_status') %}
+            {{ "255" if status not in ['idle', 'unavailable'] else "128" }}
         event:
           "up":
             - service: script.plate_vacuum_popup
               data:
                 entity_name: "Vacuum"
-                entity_id: "switch.ijai_v1_642f_switch_status"
+                entity_id: "sensor.ijai_v1_642f_status"
                 entity_icon: "\uE70D"
-      - obj: "p3b82" # Vacuum icon
+      - obj: "p1b52" # Vacuum icon
         properties:
-          "text_color": '{{ "#4CAF50" if is_state("switch.ijai_v1_642f_switch_status", "on") else "#ff9e00" }}'
-          "opacity": '{{ "255" if is_state("switch.ijai_v1_642f_switch_status", "on") else "128" }}'
-      - obj: "p3b83" # Vacuum label
-        properties:
-          "text_color": '{{ "#000" if is_state("switch.ijai_v1_642f_switch_status", "on") else "#FFF" }}'
-          "opacity": '{{ "255" if is_state("switch.ijai_v1_642f_switch_status", "on") else "128" }}'
-      - obj: "p3b84" # Vacuum status
+          "text_color": >
+            {% set status = states('sensor.ijai_v1_642f_status') %}
+            {% if status in ['cleaning', 'mopping', 'sweeping'] %}#4CAF50
+            {% elif status == 'charging' %}#2196F3
+            {% elif status == 'error' %}#FF0000
+            {% else %}#ff9e00
+            {% endif %}
+      - obj: "p1b53" # Vacuum status
         properties:
           "text": '{{ states("sensor.ijai_v1_642f_battery_level") }}%'
-          "text_color": '{{ "#000" if is_state("switch.ijai_v1_642f_switch_status", "on") else "#FFF" }}'
+      - obj: "p1b54" # Vacuum label
+        properties:
+          "text": '{{ states("sensor.ijai_v1_642f_status") | replace("_", " ") | title }}'
 
       # Page 4: Bathroom
       - obj: "p4b11" # Bathroom temperature
@@ -488,29 +497,69 @@ openhasp:
               data:
                 hvac_mode: dry
 
-      # Vacuum popup: Start cleaning button
+      # Vacuum popup: Start sweep
       - obj: "p0b180"
         event:
           "up":
-            - service: switch.turn_on
+            - service: button.press
               target:
-                entity_id: switch.ijai_v1_642f_switch_status
+                entity_id: button.ijai_v1_642f_start_sweep
 
-      # Vacuum popup: Pause button
+      # Vacuum popup: Start mop
+      - obj: "p0b181"
+        event:
+          "up":
+            - service: button.press
+              target:
+                entity_id: button.ijai_v1_642f_start_mop
+
+      # Vacuum popup: Sweep + Mop
       - obj: "p0b182"
         event:
           "up":
-            - service: switch.turn_off
+            - service: button.press
               target:
-                entity_id: switch.ijai_v1_642f_switch_status
+                entity_id: button.ijai_v1_642f_start_sweep_mop
 
-      # Vacuum popup: Return to base button
+      # Vacuum popup: Only sweep
+      - obj: "p0b183"
+        event:
+          "up":
+            - service: button.press
+              target:
+                entity_id: button.ijai_v1_642f_start_only_sweep
+
+      # Vacuum popup: Stop
       - obj: "p0b184"
         event:
           "up":
-            - service: switch.turn_off
+            - service: button.press
               target:
-                entity_id: switch.ijai_v1_642f_switch_status
+                entity_id: button.ijai_v1_642f_stop_sweeping
+
+      # Vacuum popup: Charge
+      - obj: "p0b185"
+        event:
+          "up":
+            - service: button.press
+              target:
+                entity_id: button.ijai_v1_642f_start_charge
+
+      # Vacuum popup: AI recognize toggle
+      - obj: "p0b186"
+        event:
+          "up":
+            - service: switch.toggle
+              target:
+                entity_id: switch.ijai_v1_642f_ai_recognize
+
+      # Vacuum popup: Dirt recognize toggle
+      - obj: "p0b187"
+        event:
+          "up":
+            - service: switch.toggle
+              target:
+                entity_id: switch.ijai_v1_642f_dirt_recognize
 
 script:
   plate_light_popup:
@@ -618,19 +667,19 @@ script:
         data:
           keyword: jsonl
           parameters: >-
-            {"page":0,"id":150,"obj":"obj","x":85,"y":120,"w":310,"h":280,"radius":15,"click":true,"border_side":0,"bg_color":"#0B61A4"}
+            {"page":0,"id":150,"obj":"obj","x":50,"y":80,"w":380,"h":320,"radius":15,"click":true,"border_side":0,"bg_color":"#0B61A4"}
             {"page":0,"id":151,"parentid":150,"obj":"label","x":10,"y":10,"w":48,"h":48,"click":false,"text":"{{ entity_icon }}","text_font":48,"text_color":"#fff"}
-            {"page":0,"id":152,"parentid":150,"obj":"label","x":63,"y":18,"h":28,"w":184,"align":"center","text_color":"#fff","text_font":24,"text":"{{ entity_name }}"}
-            {"page":0,"id":153,"parentid":150,"obj":"btn","x":253,"y":10,"w":48,"h":48,"radius":24,"border_side":0,"bg_color":"#CCC","text":"\uE156"}
-            {"page":0,"id":180,"parentid":150,"obj":"btn","x":10,"y":80,"w":90,"h":80,"radius":10,"border_side":0,"bg_color":"#4CAF50","text":"\uE037","text_font":32,"text_color":"#fff"}
-            {"page":0,"id":181,"parentid":150,"obj":"label","x":10,"y":165,"w":90,"h":25,"align":"center","text":"Уборка","text_font":16,"text_color":"#fff"}
-            {"page":0,"id":182,"parentid":150,"obj":"btn","x":110,"y":80,"w":90,"h":80,"radius":10,"border_side":0,"bg_color":"#FF9800","text":"\uE88A","text_font":32,"text_color":"#fff"}
-            {"page":0,"id":183,"parentid":150,"obj":"label","x":110,"y":165,"w":90,"h":25,"align":"center","text":"Пауза","text_font":16,"text_color":"#fff"}
-            {"page":0,"id":184,"parentid":150,"obj":"btn","x":210,"y":80,"w":90,"h":80,"radius":10,"border_side":0,"bg_color":"#2196F3","text":"\uE88E","text_font":32,"text_color":"#fff"}
-            {"page":0,"id":185,"parentid":150,"obj":"label","x":210,"y":165,"w":90,"h":25,"align":"center","text":"На базу","text_font":16,"text_color":"#fff"}
-            {"page":0,"id":186,"parentid":150,"obj":"label","x":10,"y":200,"w":290,"h":60,"align":"center","text":"Battery: {{ states('sensor.ijai_v1_642f_battery_level') }}%","text_font":20,"text_color":"#fff"}
+            {"page":0,"id":152,"parentid":150,"obj":"label","x":63,"y":18,"h":28,"w":254,"align":"center","text_color":"#fff","text_font":24,"text":"{{ entity_name }}"}
+            {"page":0,"id":153,"parentid":150,"obj":"btn","x":323,"y":10,"w":48,"h":48,"radius":24,"border_side":0,"bg_color":"#CCC","text":"\uE156"}
+            {"page":0,"id":180,"parentid":150,"obj":"btn","x":10,"y":70,"w":110,"h":70,"radius":10,"border_side":0,"bg_color":"#4CAF50","text":"Sweep","text_font":20,"text_color":"#fff"}
+            {"page":0,"id":181,"parentid":150,"obj":"btn","x":135,"y":70,"w":110,"h":70,"radius":10,"border_side":0,"bg_color":"#2196F3","text":"Mop","text_font":20,"text_color":"#fff"}
+            {"page":0,"id":182,"parentid":150,"obj":"btn","x":260,"y":70,"w":110,"h":70,"radius":10,"border_side":0,"bg_color":"#9C27B0","text":"Sweep+\nMop","text_font":20,"text_color":"#fff"}
+            {"page":0,"id":183,"parentid":150,"obj":"btn","x":10,"y":150,"w":110,"h":70,"radius":10,"border_side":0,"bg_color":"#FF9800","text":"Only\nSweep","text_font":20,"text_color":"#fff"}
+            {"page":0,"id":184,"parentid":150,"obj":"btn","x":135,"y":150,"w":110,"h":70,"radius":10,"border_side":0,"bg_color":"#F44336","text":"Stop","text_font":20,"text_color":"#fff"}
+            {"page":0,"id":185,"parentid":150,"obj":"btn","x":260,"y":150,"w":110,"h":70,"radius":10,"border_side":0,"bg_color":"#00BCD4","text":"Charge","text_font":20,"text_color":"#fff"}
+            {"page":0,"id":188,"parentid":150,"obj":"label","x":10,"y":235,"w":360,"h":70,"align":"center","text":"{{ states('sensor.ijai_v1_642f_status') | replace('_', ' ') | title }}\nBattery: {{ states('sensor.ijai_v1_642f_battery_level') }}%","text_font":18,"text_color":"#fff"}
       - service: input_text.set_value
         data:
-          value: "switch.ijai_v1_642f_switch_status"
+          value: "sensor.ijai_v1_642f_status"
         target:
           entity_id: input_text.plate_sel_entity
