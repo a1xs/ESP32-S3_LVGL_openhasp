@@ -18,6 +18,12 @@ input_number:
     min: 10
     max: 30
     step: 0.5
+  time_working:
+    name: "time_working"
+    initial: 0
+    min: 0
+    max: 90
+    step: 5
 
 input_text:
   plate_sel_entity:
@@ -74,7 +80,49 @@ openhasp:
         properties:
           "text_color": '{{ "#ff9e00" if is_state("number.plate04_page_number", "5") else "#FFF" }}'
 
-     # Page 1: Weather & Climate
+      # Page 0: Sensors Panel
+      - obj: "p0b21"  # Door sensor
+        properties:
+          "text_color": >
+            {% if is_state("binary_sensor.0x00158d0007e96266_contact", "unavailable") %}#FF0000
+            {% elif is_state("binary_sensor.0x00158d0007e96266_contact", "on") %}#FF9800
+            {% else %}#4CAF50
+            {% endif %}
+          "text": '{{ "\uE81B" if is_state("binary_sensor.0x00158d0007e96266_contact", "off") else "\uE81C" }}'
+
+      - obj: "p0b22"  # Window 1
+        properties:
+          "text_color": >
+            {% if is_state("binary_sensor.0x00158d0007eb4fee_contact", "unavailable") %}#FF0000
+            {% elif is_state("binary_sensor.0x00158d0007eb4fee_contact", "on") %}#FF9800
+            {% else %}#4CAF50
+            {% endif %}
+
+      - obj: "p0b23"  # Window 2
+        properties:
+          "text_color": >
+            {% if is_state("binary_sensor.0x00158d0007e91117_contact", "unavailable") %}#FF0000
+            {% elif is_state("binary_sensor.0x00158d0007e91117_contact", "on") %}#FF9800
+            {% else %}#4CAF50
+            {% endif %}
+
+      - obj: "p0b24"  # Window 3
+        properties:
+          "text_color": >
+            {% if is_state("binary_sensor.0x00158d0009c8a8ef_contact", "unavailable") %}#FF0000
+            {% elif is_state("binary_sensor.0x00158d0009c8a8ef_contact", "on") %}#FF9800
+            {% else %}#4CAF50
+            {% endif %}
+
+      - obj: "p0b25"  # Motion sensor
+        properties:
+          "text_color": >
+            {% if is_state("binary_sensor.0x00158d0008382207_occupancy", "unavailable") %}#FF0000
+            {% elif is_state("binary_sensor.0x00158d0008382207_occupancy", "on") %}#FF9800
+            {% else %}#4CAF50
+            {% endif %}
+
+      # Page 1: Weather & Climate
       - obj: "p1b12" # Weather icon
         properties:
           #"text": '{{ "\uE599" if states("weather.home_assistant_2") == "sunny" else "\uE594" if states("weather.home_assistant_2") == "clear-night" else "\uE5A8" if states("weather.home_assistant_2") in ["partlycloudy", "cloudy"] else "\uE026" if states("weather.home_assistant_2") in ["rainy", "pouring"] else "\uE717" if states("weather.home_assistant_2") == "snowy" else "\uE5A8" }}'
@@ -158,7 +206,12 @@ openhasp:
       
       - obj: "p1b43" # CO2 value
         properties:
-          "text": '{{ states("sensor.co2_sensor_co2") | round(0) }}'
+          "text": >-
+            {% if is_state("sensor.co2_sensor_co2", "unavailable") %}
+              N/A
+            {% else %}
+              {{ states("sensor.co2_sensor_co2") | round(0) }}
+            {% endif %}
 
       # Page 2: Kitchen
       - obj: "p2b11" # Kitchen temperature
@@ -217,8 +270,15 @@ openhasp:
           "opacity": '{{ "255" if not is_state("climate.ac_ac_finlux", "off") else "128" }}'
       - obj: "p2b74" # AC status
         properties:
-          "text": '{{ states("climate.ac_ac_finlux") | title if not is_state("climate.ac_ac_finlux", "off") else "Off" }}'
-          "text_color": '{{ "#000" if not is_state("climate.ac_ac_finlux", "off") else "#FFF" }}'
+          "text": >-
+            {% if is_state("climate.ac_ac_finlux", "unavailable") %}
+              N/A
+            {% elif not is_state("climate.ac_ac_finlux", "off") %}
+              {{ states("climate.ac_ac_finlux") | title }}
+            {% else %}
+              Off
+            {% endif %}
+          "text_color": '{{ "#000" if not is_state("climate.ac_ac_finlux", "off") and not is_state("climate.ac_ac_finlux", "unavailable") else "#FFF" }}'
 
       # Page 3: Bedroom
       - obj: "p3b11" # Bedroom temperature
@@ -284,6 +344,35 @@ openhasp:
           "text": '{{ "On" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "Off" }}'
           "text_color": '{{ "#000" if is_state("light.msl120_ebe9_light_bulb_2", "on") else "#FFF" }}'
       
+      - obj: "p3b81" # Garland card
+        properties:
+          "bg_color": '{{ "#FFF" if is_state("switch.sonoff_1000d1da5e", "on") else "#000" }}'
+          "bg_opa": '{{ "255" if is_state("switch.sonoff_1000d1da5e", "on") else "128" }}'
+        event:
+          "up":
+            - service: homeassistant.toggle
+              target:
+                entity_id: switch.sonoff_1000d1da5e
+      - obj: "p3b82" # Garland icon
+        properties:
+          "text_color": '{{ "#fb9b06" if is_state("switch.sonoff_1000d1da5e", "on") else "#FFF" }}'
+          "opacity": '{{ "255" if is_state("switch.sonoff_1000d1da5e", "on") else "128" }}'
+      - obj: "p3b83" # Garland label
+        properties:
+          "text_color": '{{ "#000" if is_state("switch.sonoff_1000d1da5e", "on") else "#FFF" }}'
+          "opacity": '{{ "255" if is_state("switch.sonoff_1000d1da5e", "on") else "128" }}'
+      - obj: "p3b84" # Garland status
+        properties:
+          "text": >-
+            {% if is_state("switch.sonoff_1000d1da5e", "unavailable") %}
+              N/A
+            {% elif is_state("switch.sonoff_1000d1da5e", "on") %}
+              On
+            {% else %}
+              Off
+            {% endif %}
+          "text_color": '{{ "#000" if is_state("switch.sonoff_1000d1da5e", "on") else "#FFF" }}'
+      
       - obj: "p1b51" # Vacuum card
         properties:
           "bg_color": >
@@ -300,7 +389,7 @@ openhasp:
           "up":
             - service: script.plate_vacuum_popup
               data:
-                entity_name: "Vacuum"
+                entity_name: "Vacuum Cleaner"
                 entity_id: "sensor.ijai_v1_642f_status"
                 entity_icon: "\uE70D"
       - obj: "p1b52" # Vacuum icon
@@ -318,6 +407,63 @@ openhasp:
       - obj: "p1b54" # Vacuum label
         properties:
           "text": '{{ states("sensor.ijai_v1_642f_status") | replace("_", " ") | title }}'
+      
+      - obj: "p1b61" # Timer card
+        properties:
+          "bg_color": >-
+            {% if is_state("timer.timer_working", "active") %}#FFF
+            {% else %}#000
+            {% endif %}
+          "bg_opa": >-
+            {% if is_state("timer.timer_working", "active") %}255
+            {% else %}128
+            {% endif %}
+        event:
+          "up":
+            - service: script.plate_timer_popup
+              data:
+                entity_name: "Timer"
+                entity_id: "timer.timer_working"
+                entity_icon: "\uE51B"
+      - obj: "p1b62" # Timer icon
+        properties:
+          "text_color": >-
+            {% if is_state("timer.timer_working", "active") %}#ff9e00
+            {% else %}#FFF
+            {% endif %}
+          "opacity": >-
+            {% if is_state("timer.timer_working", "active") %}255
+            {% else %}128
+            {% endif %}
+      - obj: "p1b63" # Timer label
+        properties:
+          "text_color": >-
+            {% if is_state("timer.timer_working", "active") %}#000
+            {% else %}#FFF
+            {% endif %}
+          "opacity": >-
+            {% if is_state("timer.timer_working", "active") %}255
+            {% else %}128
+            {% endif %}
+      - obj: "p1b64" # Timer countdown
+        properties:
+          "text": >-
+            {% if is_state("timer.timer_working", "active") %}
+              {% set finish = state_attr("timer.timer_working", "finishes_at") %}
+              {% if finish %}
+                {{ as_timestamp(finish) | timestamp_custom('%H:%M', true) }}
+              {% else %}
+                {{ state_attr("timer.timer_working", "remaining") | string }}
+              {% endif %}
+            {% elif is_state("timer.timer_working", "paused") %}
+              Paused
+            {% else %}
+              Off
+            {% endif %}
+          "text_color": >-
+            {% if is_state("timer.timer_working", "active") %}#000
+            {% else %}#FFF
+            {% endif %}
 
       # Page 4: Bathroom
       - obj: "p4b11" # Bathroom temperature
@@ -361,6 +507,12 @@ openhasp:
             - service: button.press
               target:
                 entity_id: button.plate04_restart
+      
+      # Page 5: Brightness button
+      - obj: "p5b71"
+        event:
+          "up":
+            - service: script.plate_brightness_popup
 
 
       #############################
@@ -488,7 +640,7 @@ openhasp:
                 hvac_mode: fan_only
 
       # Climate popup: Dry mode button
-      - obj: "p0b175"
+      - obj: "p0b176"
         event:
           "up":
             - service: climate.set_hvac_mode
@@ -561,6 +713,93 @@ openhasp:
               target:
                 entity_id: switch.ijai_v1_642f_dirt_recognize
 
+      # Timer popup: Switch toggle (starts timer script)
+      - obj: "p0b190"
+        event:
+          "up":
+            - choose:
+                - conditions:
+                    - condition: state
+                      entity_id: switch.chuangmi_212a01_039c_switch
+                      state: 'off'
+                  sequence:
+                    - service: script.turn_on
+                      target:
+                        entity_id: script.socket_timer
+              default:
+                - service: switch.turn_off
+                  target:
+                    entity_id: switch.chuangmi_212a01_039c_switch
+                - service: timer.cancel
+                  target:
+                    entity_id: timer.timer_working
+
+      # Timer popup: Time down button
+      - obj: "p0b191"
+        event:
+          "up":
+            - service: input_number.set_value
+              target:
+                entity_id: input_number.time_working
+              data:
+                value: >-
+                  {{ [states('input_number.time_working') | int - 5, 0] | max }}
+            - delay: 0.2
+            - service: openhasp.command
+              target:
+                entity_id: openhasp.plate04
+              data:
+                keyword: p0b192.text
+                parameters: '{{ states("input_number.time_working") | int }} min'
+
+      # Timer popup: Time up button
+      - obj: "p0b193"
+        event:
+          "up":
+            - service: input_number.set_value
+              target:
+                entity_id: input_number.time_working
+              data:
+                value: >-
+                  {{ [states('input_number.time_working') | int + 5, 180] | min }}
+            - delay: 0.2
+            - service: openhasp.command
+              target:
+                entity_id: openhasp.plate04
+              data:
+                keyword: p0b192.text
+                parameters: '{{ states("input_number.time_working") | int }} min'
+      
+      # Brightness popup: Light button
+      - obj: "p0b200"
+        event:
+          "up":
+            - service: light.turn_on
+              target:
+                entity_id: light.plate04_backlight
+              data:
+                brightness: 255
+            - service: openhasp.command
+              target:
+                entity_id: openhasp.plate04
+              data:
+                keyword: p0b150.delete
+      
+      # Brightness popup: Dark button
+      - obj: "p0b201"
+        event:
+          "up":
+            - service: light.turn_on
+              target:
+                entity_id: light.plate04_backlight
+              data:
+                brightness: 217
+            - service: openhasp.command
+              target:
+                entity_id: openhasp.plate04
+              data:
+                keyword: p0b150.delete
+
 script:
   plate_light_popup:
     mode: single
@@ -632,7 +871,7 @@ script:
         data:
           keyword: jsonl
           parameters: >-
-            {"page":0,"id":150,"obj":"obj","x":85,"y":90,"w":310,"h":340,"radius":15,"click":true,"border_side":0,"bg_color":"#0B61A4"}
+            {"page":0,"id":150,"obj":"obj","x":85,"y":90,"w":310,"h":320,"radius":15,"click":true,"border_side":0,"bg_color":"#0B61A4"}
             {"page":0,"id":151,"parentid":150,"obj":"label","x":10,"y":10,"w":48,"h":48,"click":false,"text":"{{ entity_icon }}","text_font":48,"text_color":"#fff"}
             {"page":0,"id":152,"parentid":150,"obj":"label","x":63,"y":18,"h":28,"w":184,"align":"center","text_color":"#fff","text_font":24,"text":"{{ entity_name }}"}
             {"page":0,"id":153,"parentid":150,"obj":"btn","x":253,"y":10,"w":48,"h":48,"radius":24,"border_side":0,"bg_color":"#CCC","text":"\uE156"}
@@ -640,11 +879,10 @@ script:
             {"page":0,"id":161,"parentid":150,"obj":"label","x":90,"y":80,"w":130,"h":60,"align":"center","text":"{{ state_attr(entity_id, 'temperature') | round(1) }}°C","text_font":32,"text_color":"#fff"}
             {"page":0,"id":162,"parentid":150,"obj":"btn","x":230,"y":80,"w":60,"h":60,"radius":30,"border_side":0,"bg_color":"#FF5722","text":"\uE415","text_font":32,"text_color":"#fff"}
             {"page":0,"id":170,"parentid":150,"obj":"btn","x":10,"y":160,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#4CAF50' if not is_state(entity_id, 'off') else '#555' }}","text":"\uE425","text_font":32,"text_color":"#fff"}
-            {"page":0,"id":171,"parentid":150,"obj":"btn","x":110,"y":160,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#2196F3' if state_attr(entity_id, 'hvac_mode') == 'auto' else '#555' }}","text":"\uE32A","text_font":32,"text_color":"#fff"}
-            {"page":0,"id":172,"parentid":150,"obj":"btn","x":210,"y":160,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#03A9F4' if state_attr(entity_id, 'hvac_mode') == 'cool' else '#555' }}","text":"\uE717","text_font":32,"text_color":"#fff"}
-            {"page":0,"id":173,"parentid":150,"obj":"btn","x":10,"y":240,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#FF5722' if state_attr(entity_id, 'hvac_mode') == 'heat' else '#555' }}","text":"\uE238","text_font":32,"text_color":"#fff"}
-            {"page":0,"id":174,"parentid":150,"obj":"btn","x":110,"y":240,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#9E9E9E' if state_attr(entity_id, 'hvac_mode') == 'fan_only' else '#555' }}","text":"\uE210","text_font":32,"text_color":"#fff"}
-            {"page":0,"id":175,"parentid":150,"obj":"btn","x":210,"y":240,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#00BCD4' if state_attr(entity_id, 'hvac_mode') == 'dry' else '#555' }}","text":"\uE58E","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":172,"parentid":150,"obj":"btn","x":110,"y":160,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#03A9F4' if state_attr(entity_id, 'hvac_mode') == 'cool' else '#555' }}","text":"\uE717","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":173,"parentid":150,"obj":"btn","x":210,"y":160,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#FF5722' if state_attr(entity_id, 'hvac_mode') == 'heat' else '#555' }}","text":"\uE238","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":174,"parentid":150,"obj":"btn","x":10,"y":240,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#9E9E9E' if state_attr(entity_id, 'hvac_mode') == 'fan_only' else '#555' }}","text":"\uE210","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":176,"parentid":150,"obj":"btn","x":110,"y":240,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#00BCD4' if state_attr(entity_id, 'hvac_mode') == 'dry' else '#555' }}","text":"\uE58E","text_font":32,"text_color":"#fff"}
       - service: input_text.set_value
         data:
           value: "{{ entity_id }}"
@@ -683,3 +921,51 @@ script:
           value: "sensor.ijai_v1_642f_status"
         target:
           entity_id: input_text.plate_sel_entity
+
+  plate_timer_popup:
+    mode: single
+    fields:
+      entity_id:
+        name: entity_id
+      entity_name:
+        name: entity_name
+      entity_icon:
+        name: entity_icon
+    sequence:
+      - service: openhasp.command
+        target:
+          entity_id: openhasp.plate04
+        data:
+          keyword: jsonl
+          parameters: >-
+            {"page":0,"id":150,"obj":"obj","x":85,"y":90,"w":310,"h":280,"radius":15,"click":true,"border_side":0,"bg_color":"#0B61A4"}
+            {"page":0,"id":151,"parentid":150,"obj":"label","x":10,"y":10,"w":48,"h":48,"click":false,"text":"{{ entity_icon }}","text_font":48,"text_color":"#fff"}
+            {"page":0,"id":152,"parentid":150,"obj":"label","x":63,"y":18,"h":28,"w":184,"align":"center","text_color":"#fff","text_font":24,"text":"{{ entity_name }}"}
+            {"page":0,"id":153,"parentid":150,"obj":"btn","x":253,"y":10,"w":48,"h":48,"radius":24,"border_side":0,"bg_color":"#CCC","text":"\uE156"}
+            {"page":0,"id":190,"parentid":150,"obj":"btn","x":110,"y":70,"w":90,"h":70,"radius":10,"border_side":0,"bg_color":"{{ '#4CAF50' if is_state('switch.chuangmi_212a01_039c_switch', 'on') else '#555' }}","text":"\uE425","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":194,"parentid":150,"obj":"label","x":30,"y":160,"h":30,"w":250,"text_color":"#fff","text_font":16,"text":"Working Time"}
+            {"page":0,"id":191,"parentid":150,"obj":"btn","x":20,"y":195,"w":60,"h":60,"radius":30,"border_side":0,"bg_color":"#FF5722","text":"\uE374","text_font":32,"text_color":"#fff"}
+            {"page":0,"id":192,"parentid":150,"obj":"label","x":90,"y":195,"w":130,"h":60,"align":"center","text":"{{ states('input_number.time_working') | int }} min","text_font":28,"text_color":"#fff"}
+            {"page":0,"id":193,"parentid":150,"obj":"btn","x":230,"y":195,"w":60,"h":60,"radius":30,"border_side":0,"bg_color":"#FF5722","text":"\uE415","text_font":32,"text_color":"#fff"}
+      - service: input_text.set_value
+        data:
+          value: "{{ entity_id }}"
+        target:
+          entity_id: input_text.plate_sel_entity
+  
+  plate_brightness_popup:
+    mode: single
+    sequence:
+      - service: openhasp.command
+        target:
+          entity_id: openhasp.plate04
+        data:
+          keyword: jsonl
+          parameters: >-
+            {"page":0,"id":150,"obj":"obj","x":85,"y":130,"w":310,"h":240,"radius":15,"click":true,"border_side":0,"bg_color":"#0B61A4"}
+            {"page":0,"id":151,"parentid":150,"obj":"label","x":10,"y":10,"w":48,"h":48,"click":false,"text":"\uE430","text_font":48,"text_color":"#fff"}
+            {"page":0,"id":152,"parentid":150,"obj":"label","x":63,"y":18,"h":28,"w":184,"align":"center","text_color":"#fff","text_font":24,"text":"Brightness"}
+            {"page":0,"id":153,"parentid":150,"obj":"btn","x":253,"y":10,"w":48,"h":48,"radius":24,"border_side":0,"bg_color":"#CCC","text":"\uE156"}
+            {"page":0,"id":200,"parentid":150,"obj":"btn","x":30,"y":80,"w":120,"h":120,"radius":15,"border_side":0,"bg_color":"#FFC107","text":"\uE430\nLight","text_font":24,"text_color":"#000"}
+            {"page":0,"id":201,"parentid":150,"obj":"btn","x":160,"y":80,"w":120,"h":120,"radius":15,"border_side":0,"bg_color":"#424242","text":"\uE430\nDark","text_font":24,"text_color":"#FFF"}
+
