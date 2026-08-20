@@ -81,52 +81,61 @@ openhasp:
           "text_color": '{{ "#ff9e00" if is_state("number.plate04_page_number", "5") else "#FFF" }}'
 
       # Page 0: Sensors Panel
-      - obj: "p0b21"  # Door sensor
+      
+      - obj: "p0b21"  # Window bedrooom
         properties:
           "text_color": >
-            {% if is_state("binary_sensor.0x00158d0007e96266_contact", "unavailable") %}#FF0000
+            {% if states("binary_sensor.0x00158d0007eb4fee_contact") in ["unavailable", "unknown"] %}#FF0000
+            {% elif is_state("binary_sensor.0x00158d0007eb4fee_contact", "on") %}#FF9800
+            {% else %}#4CAF50
+            {% endif %}      
+
+      - obj: "p0b22"  # Motion sensor
+        properties:
+          "text_color": >
+            {% if states("binary_sensor.0x00158d0008382207_occupancy") in ["unavailable", "unknown"] %}#FF0000
+            {% elif is_state("binary_sensor.0x00158d0008382207_occupancy", "on") %}#FF9800
+            {% else %}#4CAF50
+            {% endif %}
+            
+      - obj: "p0b23"  # Window Bathroom
+        properties:
+          "text_color": >
+            {% if states("binary_sensor.0x00158d0007eb0727_contact") in ["unavailable", "unknown"] %}#FF0000
+            {% elif is_state("binary_sensor.0x00158d0007eb0727_contact", "on") %}#FF9800
+            {% else %}#4CAF50
+            {% endif %}
+      
+      - obj: "p0b24"  # Door sensor
+        properties:
+          "text_color": >
+            {% if states("binary_sensor.0x00158d0007e96266_contact") in ["unavailable", "unknown"] %}#FF0000
             {% elif is_state("binary_sensor.0x00158d0007e96266_contact", "on") %}#FF9800
             {% else %}#4CAF50
             {% endif %}
           "text": '{{ "\uE81B" if is_state("binary_sensor.0x00158d0007e96266_contact", "off") else "\uE81C" }}'
 
-      - obj: "p0b22"  # Window 1
+      - obj: "p0b25"  # Window Livingroom
         properties:
           "text_color": >
-            {% if is_state("binary_sensor.0x00158d0007eb4fee_contact", "unavailable") %}#FF0000
-            {% elif is_state("binary_sensor.0x00158d0007eb4fee_contact", "on") %}#FF9800
-            {% else %}#4CAF50
-            {% endif %}
-
-      - obj: "p0b23"  # Window 2
-        properties:
-          "text_color": >
-            {% if is_state("binary_sensor.0x00158d0007e91117_contact", "unavailable") %}#FF0000
+            {% if states("binary_sensor.0x00158d0007e91117_contact") in ["unavailable", "unknown"] %}#FF0000
             {% elif is_state("binary_sensor.0x00158d0007e91117_contact", "on") %}#FF9800
             {% else %}#4CAF50
             {% endif %}
 
-      - obj: "p0b24"  # Window 3
+      - obj: "p0b26"  # Window Kitchen
         properties:
           "text_color": >
-            {% if is_state("binary_sensor.0x00158d0009c8a8ef_contact", "unavailable") %}#FF0000
+            {% if states("binary_sensor.0x00158d0009c8a8ef_contact") in ["unavailable", "unknown"] %}#FF0000
             {% elif is_state("binary_sensor.0x00158d0009c8a8ef_contact", "on") %}#FF9800
             {% else %}#4CAF50
             {% endif %}
-
-      - obj: "p0b25"  # Motion sensor
-        properties:
-          "text_color": >
-            {% if is_state("binary_sensor.0x00158d0008382207_occupancy", "unavailable") %}#FF0000
-            {% elif is_state("binary_sensor.0x00158d0008382207_occupancy", "on") %}#FF9800
-            {% else %}#4CAF50
-            {% endif %}
             
-      - obj: "p0b26"  # Window 4
+      - obj: "p0b27"  # Window Reserve
         properties:
           "text_color": >
-            {% if is_state("binary_sensor.0x00158d0007eb0727_contact", "unavailable") %}#FF0000
-            {% elif is_state("binary_sensor.0x00158d0007eb0727_contact", "on") %}#FF9800
+            {% if states("binary_sensor.0x001_contact") in ["unavailable", "unknown"] %}#FF0000
+            {% elif is_state("binary_sensor.0x001_contact", "on") %}#FF9800
             {% else %}#4CAF50
             {% endif %}
 

@@ -15,13 +15,14 @@
 {"page":0,"id":3,"obj":"btn","x":380,"y":10,"w":35,"h":35,"radius":18,"bg_color":"#444","text":"\uE580","text_color":"#FFF","text_font":24,"border_side":0}
 {"page":0,"id":4,"obj":"btn","action":"p5","x":430,"y":50,"w":35,"h":35,"radius":18,"bg_color":"#444","text":"\uE493","text_color":"#FFF","text_font":24,"border_side":0}
 
-{"page":0,"id":20,"obj":"obj","x":200,"y":50,"w":225,"h":35,"radius":18,"bg_color":"#2a283d","click":false,"border_side":0,"bg_opa":200}
-{"page":0,"id":22,"obj":"label","parentid":20,"x":5,"y":5,"w":25,"h":25,"text":"\uF1DB","text_color":"#4CAF50","text_font":20,"click":false}
-{"page":0,"id":21,"obj":"label","parentid":20,"x":45,"y":5,"w":25,"h":25,"text":"\uE81B","text_color":"#4CAF50","text_font":20,"click":false}
-{"page":0,"id":24,"obj":"label","parentid":20,"x":85,"y":5,"w":25,"h":25,"text":"\uF1DB","text_color":"#4CAF50","text_font":20,"click":false}
-{"page":0,"id":23,"obj":"label","parentid":20,"x":125,"y":5,"w":25,"h":25,"text":"\uF1DB","text_color":"#4CAF50","text_font":20,"click":false}
-{"page":0,"id":25,"obj":"label","parentid":20,"x":165,"y":5,"w":25,"h":25,"text":"\uE70E","text_color":"#4CAF50","text_font":20,"click":false}
-{"page":0,"id":26,"obj":"label","parentid":20,"x":200,"y":5,"w":25,"h":25,"text":"\uF1DB","text_color":"#4CAF50","text_font":20,"click":false}
+{"page":0,"id":20,"obj":"obj","x":200,"y":50,"w":215,"h":35,"radius":18,"bg_color":"#2a283d","click":false,"border_side":0,"bg_opa":200}
+{"page":0,"id":21,"obj":"label","parentid":20,"x":5,"y":5,"w":25,"h":25,"text":"\uF1DB","text_color":"#4CAF50","text_font":20,"click":false}
+{"page":0,"id":22,"obj":"label","parentid":20,"x":35,"y":5,"w":25,"h":25,"text":"\uE70E","text_color":"#4CAF50","text_font":20,"click":false}
+{"page":0,"id":23,"obj":"label","parentid":20,"x":65,"y":5,"w":25,"h":25,"text":"\uF1DB","text_color":"#4CAF50","text_font":20,"click":false}
+{"page":0,"id":24,"obj":"label","parentid":20,"x":95,"y":5,"w":25,"h":25,"text":"\uE81B","text_color":"#4CAF50","text_font":20,"click":false}
+{"page":0,"id":25,"obj":"label","parentid":20,"x":125,"y":5,"w":25,"h":25,"text":"\uF1DB","text_color":"#4CAF50","text_font":20,"click":false}
+{"page":0,"id":26,"obj":"label","parentid":20,"x":155,"y":5,"w":25,"h":25,"text":"\uF1DB","text_color":"#4CAF50","text_font":20,"click":false}
+{"page":0,"id":27,"obj":"label","parentid":20,"x":185,"y":5,"w":25,"h":25,"text":"\uF1DB","text_color":"#4CAF50","text_font":20,"click":false}
 
 {"page":1,"id":2,"obj":"label","x":15,"y":55,"h":30,"w":480,"text":"Weather & Climate", "text_color":"#FFF","text_font": 24}
 
