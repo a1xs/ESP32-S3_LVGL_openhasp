@@ -121,6 +121,14 @@ openhasp:
             {% elif is_state("binary_sensor.0x00158d0008382207_occupancy", "on") %}#FF9800
             {% else %}#4CAF50
             {% endif %}
+            
+      - obj: "p0b26"  # Window 4
+        properties:
+          "text_color": >
+            {% if is_state("binary_sensor.0x00158d0007eb0727_contact", "unavailable") %}#FF0000
+            {% elif is_state("binary_sensor.0x00158d0007eb0727_contact", "on") %}#FF9800
+            {% else %}#4CAF50
+            {% endif %}
 
       # Page 1: Weather & Climate
       - obj: "p1b12" # Weather icon
