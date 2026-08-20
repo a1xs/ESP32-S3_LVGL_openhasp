@@ -127,7 +127,7 @@ openhasp:
         properties:
           #"text": '{{ "\uE599" if states("weather.home_assistant_2") == "sunny" else "\uE594" if states("weather.home_assistant_2") == "clear-night" else "\uE5A8" if states("weather.home_assistant_2") in ["partlycloudy", "cloudy"] else "\uE026" if states("weather.home_assistant_2") in ["rainy", "pouring"] else "\uE717" if states("weather.home_assistant_2") == "snowy" else "\uE5A8" }}'
           
-          "src": '{{ "L:/w-sunny.png" if states("weather.home_assistant_2") == "sunny" else "L:/w-sunny.png" if states("weather.home_assistant_2") == "clear-night" else "L:/w-cloudy.png" if states("weather.home_assistant_2") == "cloudy" else "L:/w-partlycloudy.png" if states("weather.home_assistant_2") == "partlycloudy" else "L:/w-rainy.png" if states("weather.home_assistant_2") == "rainy" else "L:/w-pouring.png" if states("weather.home_assistant_2") == "pouring" else "L:/w-lightning-rainy.png" if states("weather.home_assistant_2") == "lightning-rainy" else "L:/w-lightning.png" if states("weather.home_assistant_2") == "lightning" else "L:/w-storm.png" if states("weather.home_assistant_2") == "storm" else "L:/w-snowy.png" if states("weather.home_assistant_2") == "snowy" else "L:/w-snowy-rainy.png" if states("weather.home_assistant_2") == "snowy-rainy" else "L:/w-hail.png" if states("weather.home_assistant_2") == "hail" else "L:/w-foggy.png" if states("weather.home_assistant_2") == "fog" else "L:/w-windy.png" if states("weather.home_assistant_2") == "windy" else "L:/w-windy-variant.png" if states("weather.home_assistant_2") == "windy-variant" else "L:/w-exceptional.png" if states("weather.home_assistant_2") == "exceptional" else "L:/w-cloudy.png" }}'
+          "src": '{{ "L:/w-sunny.png" if states("weather.home_assistant_2") == "sunny" else "L:/w-clear-night.png" if states("weather.home_assistant_2") == "clear-night" else "L:/w-cloudy.png" if states("weather.home_assistant_2") == "cloudy" else "L:/w-partlycloudy.png" if states("weather.home_assistant_2") == "partlycloudy" else "L:/w-rainy.png" if states("weather.home_assistant_2") == "rainy" else "L:/w-pouring.png" if states("weather.home_assistant_2") == "pouring" else "L:/w-lightning-rainy.png" if states("weather.home_assistant_2") == "lightning-rainy" else "L:/w-lightning.png" if states("weather.home_assistant_2") == "lightning" else "L:/w-storm.png" if states("weather.home_assistant_2") == "storm" else "L:/w-snowy.png" if states("weather.home_assistant_2") == "snowy" else "L:/w-snowy-rainy.png" if states("weather.home_assistant_2") == "snowy-rainy" else "L:/w-hail.png" if states("weather.home_assistant_2") == "hail" else "L:/w-foggy.png" if states("weather.home_assistant_2") == "fog" else "L:/w-windy.png" if states("weather.home_assistant_2") == "windy" else "L:/w-windy-variant.png" if states("weather.home_assistant_2") == "windy-variant" else "L:/w-exceptional.png" if states("weather.home_assistant_2") == "exceptional" else "L:/w-cloudy.png" }}'
           
           
       - obj: "p1b13" # Weather temperature
@@ -197,12 +197,12 @@ openhasp:
           "up":
             - service: homeassistant.toggle
               target:
-                entity_id: light.ledboard
+                entity_id: light.s_u_esp_2r_led_1
       
       - obj: "p1b42" # CO2 icon (changes based on light state)
         properties:
-          "text": '{{ "\uE6E8" if is_state("light.ledboard", "on") else "\uE335" }}'
-          "text_color": '{{ "#fb9b06" if is_state("light.ledboard", "on") else "#FFF" }}'
+          "text": '{{ "\uE6E8" if is_state("light.s_u_esp_2r_led_1", "on") else "\uE335" }}'
+          "text_color": '{{ "#fb9b06" if is_state("light.s_u_esp_2r_led_1", "on") else "#FFF" }}'
       
       - obj: "p1b43" # CO2 value
         properties:
@@ -255,6 +255,15 @@ openhasp:
           "bg_opa": '{{ "255" if not is_state("climate.ac_ac_finlux", "off") else "128" }}'
         event:
           "up":
+            # Update temperature on AC card
+            - service: openhasp.command
+              target:
+                entity_id: openhasp.plate04
+              data:
+                keyword: p2b75.text
+                parameters: '{{ state_attr("climate.ac_ac_finlux", "temperature") | round(1) }}°C'
+    
+            # Open climate popup
             - service: script.plate_climate_popup
               data:
                 entity_name: "Air Conditioner"
@@ -559,13 +568,24 @@ openhasp:
                 temperature: >
                   {{ [state_attr(states('input_text.plate_sel_entity'), 'temperature') - 1, 
                       state_attr(states('input_text.plate_sel_entity'), 'min_temp')] | max }}
-            - delay: 0.2
+            - delay: 1
+            
+            # Update temperature on climate popup
             - service: openhasp.command
               target:
                 entity_id: openhasp.plate04
               data:
                 keyword: p0b161.text
                 parameters: '{{ state_attr(states("input_text.plate_sel_entity"), "temperature") | round(1) }}°C'
+
+             # Update temperature on card AC
+            - service: openhasp.command
+              target:
+                entity_id: openhasp.plate04
+              data:
+                keyword: p2b75.text
+                parameters: '{{ state_attr(states("input_text.plate_sel_entity"), "temperature") | round(1) }}°C'
+
 
       # Climate popup: Temperature up button
       - obj: "p0b162"
@@ -578,12 +598,22 @@ openhasp:
                 temperature: >
                   {{ [state_attr(states('input_text.plate_sel_entity'), 'temperature') + 1, 
                       state_attr(states('input_text.plate_sel_entity'), 'max_temp')] | min }}
-            - delay: 0.2
+            - delay: 1
+            
+            # Update temperature on climate popup
             - service: openhasp.command
               target:
                 entity_id: openhasp.plate04
               data:
                 keyword: p0b161.text
+                parameters: '{{ state_attr(states("input_text.plate_sel_entity"), "temperature") | round(1) }}°C'
+            
+             # Update temperature on card AC
+            - service: openhasp.command
+              target:
+                entity_id: openhasp.plate04
+              data:
+                keyword: p2b75.text
                 parameters: '{{ state_attr(states("input_text.plate_sel_entity"), "temperature") | round(1) }}°C'
 
       # Climate popup: Power button
